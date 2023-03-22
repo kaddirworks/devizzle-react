@@ -22,6 +22,7 @@ class Login extends React.Component {
 
     this.handleLogin = (accessToken, userId, username, expiration) => {
       let exp = new Date(expiration).toUTCString();
+      // TODO: add Secure; again once I have an SSL certificate
       document.cookie = `access_token=${accessToken}; SameSite=Lax; expires=${exp};`;
       document.cookie = `username=${username}; SameSite=Lax; expires=${exp};`;
       document.cookie = `user_id=${userId}; SameSite=Lax; expires=${exp};`;

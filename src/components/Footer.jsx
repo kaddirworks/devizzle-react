@@ -8,12 +8,31 @@ class Footer extends React.Component {
   render() {
     return (
       <footer className="footer">
-        <div className="content has-text-centered">
-          <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis,
-            voluptas! Voluptates natus tenetur libero ea accusamus tempora
-            ipsam, maiores vitae provident? Ea, illo iste.
-          </p>
+        <div className="columns">
+          <div className="column">
+            <strong>Disclaimer</strong>
+            <p>
+              This is a work in progress project made in my free time. If you
+              encounter any issues or have a suggestion, please do not hesitate
+              in contacting me. :)
+            </p>
+            <p>Proudly made in Brazil.</p>
+          </div>
+          <div className="column">
+            <strong>Contact Info</strong>
+            <p>
+              <span title="Discord">
+                <i className="fa-brands fa-discord"></i>
+              </span>{" "}
+              kaddir#9770
+            </p>
+            <p>
+              <span title="Slack/Email">
+                <i class="fa-brands fa-slack"></i>
+              </span>{" "}
+              wesleybarros950@gmail.com
+            </p>
+          </div>
         </div>
       </footer>
     );

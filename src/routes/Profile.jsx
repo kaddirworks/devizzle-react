@@ -32,10 +32,7 @@ class Profile extends React.Component {
                 Welcome back, <strong>{this.context.userInfo.username}</strong>!
               </h1>
               <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Exercitationem at beatae, molestiae, ea distinctio similique,
-                deleniti esse et temporibus cum provident accusamus laborum
-                natus ratione ipsam rem blanditiis corrupti itaque.
+                Come here to check if your messages have been received by someone.
               </p>
               <UserMessagesPanel />
             </section>
