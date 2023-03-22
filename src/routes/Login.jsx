@@ -22,9 +22,9 @@ class Login extends React.Component {
 
     this.handleLogin = (accessToken, userId, username, expiration) => {
       let exp = new Date(expiration).toUTCString();
-      document.cookie = `access_token=${accessToken}; SameSite=Lax; expires=${exp}; Secure;`;
-      document.cookie = `username=${username}; SameSite=Lax; expires=${exp}; Secure;`;
-      document.cookie = `user_id=${userId}; SameSite=Lax; expires=${exp}; Secure;`;
+      document.cookie = `access_token=${accessToken}; SameSite=Lax; expires=${exp};`;
+      document.cookie = `username=${username}; SameSite=Lax; expires=${exp};`;
+      document.cookie = `user_id=${userId}; SameSite=Lax; expires=${exp};`;
 
       this.context.setUserInfo({ username, accessToken: accessToken, userId });
       this.context.load()
