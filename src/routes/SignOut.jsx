@@ -19,7 +19,7 @@ class SignOut extends React.Component {
       document.cookie = "access_token=;";
       document.cookie = "username=;";
       document.cookie = "user_id=;";
-      this.context.setUserInfo(null);
+      this.context.clearContext()
       this.setState({ done: true });
     }, 500);
   }

@@ -3,7 +3,8 @@ import React from "react";
 import { Link, Navigate } from "react-router-dom";
 
 import UserContext from "../context/user";
-import client from "../client";
+
+import Client from "../client/Client";
 
 class Login extends React.Component {
   static contextType = UserContext;
@@ -26,31 +27,27 @@ class Login extends React.Component {
       document.cookie = `user_id=${userId}; SameSite=Lax; expires=${exp}; Secure;`;
 
       this.context.setUserInfo({ username, accessToken: accessToken, userId });
+      this.context.load()
     };
 
-    this.onSubmit = (e) => {
+    this.onSubmit = async (e) => {
       e.preventDefault();
 
       let form = document.forms[0];
       let formData = new FormData(form);
+      let client = new Client(null);
 
-      client.post(
-        "/auth/login",
-        {},
-        formData,
-        (res) => {
-          let data = res.data;
-          this.handleLogin(
-            data.access_token,
-            data.user_id,
-            data.username,
-            data.expiration
-          );
-        },
-        (error) => {
-          this.setError(error.data.detail.msg);
-        }
-      );
+      let result = await client.authLogin(formData);
+      if (result.access_token) {
+        this.handleLogin(
+          result.access_token,
+          result.user_id,
+          result.username,
+          result.expiration
+        );
+      } else {
+        this.setError(result.detail);
+      }
     };
   }
 

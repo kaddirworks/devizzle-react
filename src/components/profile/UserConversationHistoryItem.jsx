@@ -10,15 +10,22 @@ class UserConversationHistoryItem extends React.Component {
 
   render() {
     return (
-      <blockquote className="blockquote">
-        <strong>
-          {this.props.message.profile_id == this.context.messagingProfile
-            ? "Me"
-            : "Someone"}
-        </strong>
-        <small> {new Date(this.props.message.send_date).toLocaleString()}</small>
-        <p>{this.props.message.text}</p>
-      </blockquote>
+      <>
+        {this.props.message && (
+          <blockquote className="blockquote">
+            <strong>
+              {this.props.message.profile_id == this.context.messagingProfile
+                ? "Me"
+                : "Someone"}
+            </strong>
+            <small>
+              {" "}
+              {new Date(this.props.message.send_date).toLocaleString()}
+            </small>
+            <p>{this.props.message.text}</p>
+          </blockquote>
+        )}
+      </>
     );
   }
 }

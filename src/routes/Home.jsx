@@ -10,10 +10,10 @@ class Home extends React.Component {
   render() {
     return (
       <>
-        <section class="hero is-large is-link">
-          <div class="hero-body">
-            <p class="title">Devizzle</p>
-            <p class="subtitle">Send your message to the world.</p>
+        <section className="hero is-large is-link">
+          <div className="hero-body">
+            <p className="title">Devizzle</p>
+            <p className="subtitle">Send your message to the world.</p>
             <a className="button is-primary" href="#how-it-works">
               Learn More
             </a>

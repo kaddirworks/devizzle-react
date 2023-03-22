@@ -1,113 +1,64 @@
+import { Axios } from "axios";
+
+const post = (url, info, client, options = {}) => {
+  return client.post(url, JSON.stringify(info), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    ...options,
+  });
+};
+
 class Client {
-  constructor() {
-    let accessToken = document.cookie
-      .split(";")
-      .map((elem) => elem.trim())
-      .find((elem) => elem.startsWith("access_token="))
-      ?.split("=")[1];
-
-    this.apiBaseUrl = import.meta.env["VITE_API_SERVER_ADDRESS"];
-    this.defaultHeaders = {
-      Authorization: "Bearer " + accessToken,
-    };
-  }
-
-  _makeRequest(
-    info = {},
-    suffix = "/",
-    headers = {},
-    onResult = (data) => {},
-    onError = (error) => {}
-  ) {
-    // TODO: this is rubbish
-    let body = info["body"];
-
-    if (info.method === "GET") {
-      body = null;
-    }
-
-    if (body) {
-      if (!(body instanceof FormData)) {
-        body = JSON.stringify(body);
-      }
-    }
-
-    fetch(this.apiBaseUrl + suffix, {
-      method: info["method"],
-      body,
+  constructor(accessToken) {
+    this.axios = new Axios({
+      baseURL: import.meta.env["VITE_API_SERVER_ADDRESS"],
       headers: {
-        ...(headers || {}),
-        ...this.defaultHeaders,
+        Authorization: "Bearer " + accessToken,
       },
-    }).then(
-      (res) => {
-        res.json().then(
-          (data) => {
-            if (!res.ok)
-              onError({
-                code: res.status,
-                data,
-              });
-            else
-              onResult({
-                code: res.status,
-                data,
-              });
-          },
-          (error) => {
-            onError({
-              data: {
-                message: error.message,
-              },
-            });
-          }
-        );
-      },
-      (error) => {
-        onError({
-          data: {
-            message: error.message,
-          },
-        });
-      }
+    });
+  }
+
+  async authActivate(secretCode) {
+    return (await this.axios.get("/auth/activate/" + secretCode)).data;
+  }
+
+  async authRegister(info) {
+    return JSON.parse((await post("/auth/register", info, this.axios)).data);
+  }
+
+  async authLogin(form) {
+    return JSON.parse((await this.axios.postForm("/auth/login", form)).data);
+  }
+
+  async bottlesSend(info) {
+    return JSON.parse((await post("/bottles/send", info, this.axios)).data);
+  }
+
+  async bottlesReceive() {
+    let data = (await this.axios.get("/bottles/receive")).data;
+    if (data) {
+      return JSON.parse(data);
+    }
+    return {};
+  }
+
+  async bottlesRespond(info) {
+    return JSON.parse((await post("/bottles/respond", info, this.axios)).data);
+  }
+
+  async bottlesGetMyMessages(params) {
+    return JSON.parse(
+      (
+        await this.axios.get("/bottles/my-messages", {
+          params,
+        })
+      ).data
     );
   }
 
-  get(
-    suffix = "/",
-    headers = {},
-    onResult = (data) => {},
-    onError = (error) => {}
-  ) {
-    this._makeRequest(
-      {
-        method: "GET",
-        body: null,
-      },
-      suffix,
-      headers,
-      onResult,
-      onError
-    );
-  }
-
-  post(
-    suffix = "/",
-    headers = {},
-    body = {},
-    onResult = (data) => {},
-    onError = (error) => {}
-  ) {
-    this._makeRequest(
-      {
-        method: "POST",
-        body: body,
-      },
-      suffix,
-      headers,
-      onResult,
-      onError
-    );
+  async getProfile() {
+    return JSON.parse((await this.axios.get("/bottles/profile")).data);
   }
 }
 

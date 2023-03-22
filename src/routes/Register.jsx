@@ -1,39 +1,26 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Client from "../client/Client";
 
 function Register() {
   const [error, setError] = useState(null);
   const [usedEmail, setUsedEmail] = useState(null);
   const [isDone, setDone] = useState(false);
 
-  function onSubmit(e) {
+  async function onSubmit(e) {
     e.preventDefault();
 
     let registerForm = document.forms[0];
     let formData = new FormData(registerForm);
-    let bodyJSON = Object.fromEntries(formData.entries());
+    let client = new Client(null);
+    let result = await client.authRegister(Object.fromEntries(formData));
 
-    fetch("http://localhost:8000/auth/register", {
-      body: JSON.stringify(bodyJSON),
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then(
-      (res) => {
-        res.json().then(
-          (data) => {
-            if (!res.ok) setError(data.detail);
-            else {
-              setUsedEmail(data.email);
-              setDone(true);
-            }
-          },
-          (err) => setError(JSON.stringify(err))
-        );
-      },
-      (err) => setError(JSON.stringify(err))
-    );
+    if (result.email) {
+      setDone(true);
+      setUsedEmail(result.email);
+    } else {
+      setError(result.detail);
+    }
   }
 
   return (

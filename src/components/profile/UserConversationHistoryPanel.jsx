@@ -31,9 +31,7 @@ class UserConversationHistoryPanel extends React.Component {
       <div className="tile is-vertical is-8">
         <div className="tile is-parent">
           <article className="tile is-child">
-            <p className="title">
-              History
-            </p>
+            <p className="title">History</p>
             <div
               style={{
                 maxHeight: "30em",
@@ -46,14 +44,16 @@ class UserConversationHistoryPanel extends React.Component {
               <UserConversationHistoryItem
                 message={this.context.viewingMessage}
               />
-              {this.context.viewingMessage.responses.map((response) => {
-                return (
-                  <UserConversationHistoryItem
-                    key={`response-${response.id}`}
-                    message={response}
-                  />
-                );
-              })}
+              {this.context.viewingMessage &&
+                this.context.viewingMessage.responses &&
+                this.context.viewingMessage.responses.map((response) => {
+                  return (
+                    <UserConversationHistoryItem
+                      key={`response-${response.id}`}
+                      message={response}
+                    />
+                  );
+                })}
             </div>
             <UserConversationReplyForm />
           </article>

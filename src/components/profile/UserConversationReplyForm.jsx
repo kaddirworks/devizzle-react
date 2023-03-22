@@ -1,7 +1,6 @@
 import React from "react";
+import Client from "../../client/Client";
 import UserContext from "../../context/user";
-
-import client from "../../client";
 
 class UserConversationReplyForm extends React.Component {
   static contextType = UserContext;
@@ -11,7 +10,7 @@ class UserConversationReplyForm extends React.Component {
     this.handleSendResponse = this.handleSendResponse.bind(this);
   }
 
-  handleSendResponse(e) {
+  async handleSendResponse(e) {
     e.preventDefault();
 
     let form = document.forms[0];
@@ -21,25 +20,17 @@ class UserConversationReplyForm extends React.Component {
       responding_to_id: this.context.viewingMessage.id,
     };
 
-    client.post(
-      "/bottles/respond",
-      {
-        "Content-Type": "application/json",
-      },
-      body,
-      (res) => {
-        let data = res.data;
-        let newViewingMessage = { ...this.context.viewingMessage };
-        newViewingMessage.responses.push(data);
-        this.context.set({
-          viewingMessage: newViewingMessage,
-        });
-        document.querySelector("#response").value = "";
-      },
-      (error) => {
-        if (error.code == 401) this.context.handle401();
-      }
-    );
+    let client = new Client(this.context.userInfo.accessToken);
+    let result = await client.bottlesRespond(body);
+
+    if (result.text) {
+      let newViewingMessage = { ...this.context.viewingMessage };
+      newViewingMessage.responses.push(result);
+      this.context.set({
+        viewingMessage: newViewingMessage,
+      });
+      document.querySelector("#response").value = "";
+    }
   }
 
   render() {
@@ -61,7 +52,7 @@ class UserConversationReplyForm extends React.Component {
               className="button is-primary"
               onClick={this.handleSendResponse}
             >
-              <i class="fa-solid fa-paper-plane"></i>
+              <i className="fa-solid fa-paper-plane"></i>
             </button>
           </div>
         </div>

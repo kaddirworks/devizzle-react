@@ -16,7 +16,7 @@ import Activate from "./routes/Activate";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
-import client from "./client";
+import Client from "./client/Client";
 
 const decorated = (Component) => {
   return (
@@ -50,7 +50,7 @@ const router = createBrowserRouter([
     element: decorated(<SignOut />),
   },
   {
-    path: "/activate/:secretCode",
+    path: "/activate",
     element: decorated(<Activate />),
   },
   {
@@ -79,17 +79,32 @@ class App extends React.Component {
 
     this.handle401 = this.handle401.bind(this);
     this.loadMoreConversations = this.loadMoreConversations.bind(this);
+    this.loadProfile = this.loadProfile.bind(this);
+    this.load = this.load.bind(this);
+    this.clearContext = this.clearContext.bind(this);
 
     this.state = {
       error: null,
       userInfo: null,
       messages: [],
       offset: 0,
+      loadProfile: this.loadProfile,
+      load: this.load,
+      clearContext: this.clearContext,
       setUserInfo: this.setUserInfo,
       handle401: this.handle401,
       loadMoreConversations: this.loadMoreConversations,
       set: this.set,
     };
+  }
+
+  clearContext() {
+    this.setState({
+      error: null,
+      userInfo: null,
+      messages: [],
+      offset: 0,
+    });
   }
 
   setError(error) {
@@ -103,23 +118,39 @@ class App extends React.Component {
     this.setUserInfo(null);
   }
 
-  loadMoreConversations() {
-    client.get(
-      `/bottles/my-messages?skip=${this.state.offset}&limit=5`,
-      {},
-      (res) => {
-        let data = res.data;
-        this.setState({ messages: this.state.messages.concat(data) });
-      },
-      (error) => {
-        if (error.code == 401) this.handle401();
-        else this.setError(error.data.message);
-      }
-    );
-    this.setState({ offset: this.state.offset + 5 });
+  async loadMoreConversations() {
+    let client = new Client(this.state.userInfo.accessToken);
+    let newMessages = await client.bottlesGetMyMessages({
+      limit: 5,
+      skip: this.state.offset,
+    });
+    if (newMessages.detail) {
+      this.setError(newMessages.detail);
+    }
+    if (newMessages) {
+      this.setState({ messages: this.state.messages.concat(newMessages) });
+      this.setState({ offset: this.state.offset + 5 });
+    }
   }
 
-  componentDidMount() {
+  async loadProfile(client) {
+    let profileInfo = await client.getProfile();
+
+    if (profileInfo.id) {
+      this.setState({
+        messagingProfile: profileInfo.id,
+        dateRegistered: new Date(profileInfo.date_created).toLocaleDateString(),
+        sentCount: profileInfo.sent_count,
+        receivedCount: profileInfo.received_count,
+        reputation: profileInfo.reputation,
+        ranking: profileInfo.ranking,
+      });
+    } else {
+      console.error(profileInfo);
+    }
+  }
+
+  async load() {
     let accessToken = document.cookie
       .split(";")
       .map((elem) => elem.trim())
@@ -147,40 +178,25 @@ class App extends React.Component {
       accessToken,
     });
 
-    client.get(
-      "/bottles/profile",
-      {},
-      (res) => {
-        let data = res.data;
-        this.setState({
-          messagingProfile: data.id,
-          dateRegistered: new Date(data.date_created).toLocaleDateString(),
-          sentCount: data.sent_count,
-          receivedCount: data.received_count,
-          reputation: data.reputation,
-          ranking: data.ranking,
-        });
-      },
-      (error) => {
-        if (error.code == 401) this.handle401();
-        else this.setError(error.data.message);
-      }
-    );
-    client.get("/bottles/receive");
-    client.get(
-      `/bottles/my-messages?limit=5`,
-      {},
-      (res) => {
-        let data = res.data;
-        this.setState({ messages: data });
-        this.setState({ viewingMessage: data[0] });
-      },
-      (error) => {
-        if (error.code == 401) this.handle401();
-        else this.setError(error.data.message);
-      }
-    );
-    this.setState({ offset: this.state.offset + 5 });
+    let client = new Client(accessToken);
+    await this.loadProfile(client);
+    await client.bottlesReceive();
+
+    let result = await client.bottlesGetMyMessages({
+      limit: 5,
+      skip: this.state.offset,
+    });
+
+    if (result.detail) {
+      this.setError(result.error);
+    } else if (result) {
+      this.setState({ messages: result, viewingMessage: result[0] });
+      this.setState({ offset: this.state.offset + 5 });
+    }
+  }
+
+  async componentDidMount() {
+    await this.load();
   }
 
   render() {

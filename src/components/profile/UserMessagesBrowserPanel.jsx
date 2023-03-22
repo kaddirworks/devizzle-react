@@ -43,7 +43,7 @@ class UserMessagesBrowserPanel extends React.Component {
                     onClick={this.context.loadMoreConversations}
                     title="Load More"
                   >
-                    <i class="fa-solid fa-snowplow fa-bounce"></i>
+                    <i className="fa-solid fa-snowplow fa-bounce"></i>
                   </a>
                 </span>
               </p>
