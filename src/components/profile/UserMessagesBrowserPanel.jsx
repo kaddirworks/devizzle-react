@@ -29,21 +29,21 @@ class UserMessagesBrowserPanel extends React.Component {
           <div className="content">
             <div className="menu">
               <p className="menu-label">
-                Your Conversations{" "}
                 <span>
-                  <Link
-                    className="is-link"
-                    to="/write"
-                    title="Write New Message"
-                  >
-                    <i className="fa-solid fa-pencil fa-bounce"></i>
+                  <Link to="/write" className="icon-text tag is-link is-light">
+                    <span className="icon">
+                      <i className="fa-solid fa-pencil fa-bounce"></i>
+                    </span>
+                    <span>Write new Message</span>
                   </Link>{" "}
                   <a
-                    className="is-link"
                     onClick={this.context.loadMoreConversations}
-                    title="Load More"
+                    className="icon-text tag is-link is-light"
                   >
-                    <i className="fa-solid fa-snowplow fa-bounce"></i>
+                    <span className="icon">
+                      <i className="fa-solid fa-snowplow fa-bounce"></i>
+                    </span>
+                    <span>Load More</span>
                   </a>
                 </span>
               </p>

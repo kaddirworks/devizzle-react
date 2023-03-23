@@ -28,7 +28,7 @@ class Footer extends React.Component {
             </p>
             <p>
               <span title="Slack/Email">
-                <i class="fa-brands fa-slack"></i>
+                <i className="fa-brands fa-slack"></i>
               </span>{" "}
               wesleybarros950@gmail.com
             </p>

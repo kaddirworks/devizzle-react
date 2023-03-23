@@ -27,44 +27,18 @@ class Write extends React.Component {
     let client = new Client(this.context.userInfo.accessToken);
     let result = await client.bottlesSend({ message: formData.get("message") });
 
-    console.log(result)
+    console.log(result);
     if (result.id) {
       this.setResult("Your message was sent!");
-      this.context.messages.push({
+      let newMessage = {
         ...result,
         responses: [],
-      });
+      };
+      this.context.messages.push(newMessage);
+      this.context.set({ viewingMessage: newMessage });
     } else {
       this.setResult("An unexpected error has ocurred :,(");
     }
-
-    console.log(result);
-
-    // fetch("http://localhost:8000/bottles/send", {
-    //   headers: {
-    //     Authorization: "Bearer " + this.context.userInfo.accessToken,
-    //     "Content-Type": "application/json",
-    //   },
-    //   method: "POST",
-    //   body,
-    // }).then(
-    //   (res) => {
-    //     res.json().then(
-    //       (data) => {
-    //         if (!res.ok) this.setResult(data.detail);
-    //         else {
-    //           this.setResult("Your message was sent!");
-    //           this.context.messages.push({
-    //             ...data,
-    //             responses: [],
-    //           });
-    //         }
-    //       },
-    //       (err) => this.setResult(JSON.stringify(err))
-    //     );
-    //   },
-    //   (err) => this.setResult(JSON.stringify(err))
-    // );
   }
 
   render() {

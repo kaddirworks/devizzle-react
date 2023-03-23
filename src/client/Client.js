@@ -47,6 +47,12 @@ class Client {
     return JSON.parse((await post("/bottles/respond", info, this.axios)).data);
   }
 
+  async bottlesReport(conversationId) {
+    return JSON.parse(
+      (await post("/bottles/report/" + conversationId, {}, this.axios)).data
+    );
+  }
+
   async bottlesGetMyMessages(params) {
     return JSON.parse(
       (

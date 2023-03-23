@@ -32,7 +32,8 @@ class Profile extends React.Component {
                 Welcome back, <strong>{this.context.userInfo.username}</strong>!
               </h1>
               <p>
-                Come here to check if your messages have been received by someone.
+                Come here to check if your messages have been received by
+                someone.
               </p>
               <UserMessagesPanel />
             </section>
