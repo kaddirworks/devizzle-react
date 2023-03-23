@@ -12,9 +12,9 @@ class Home extends React.Component {
       <>
         <section className="hero is-large is-link">
           <div className="hero-body">
-            <p className="title">Devizzle</p>
+            <p className="title is-size-1 has-text-weight-bold">Devizzle</p>
             <p className="subtitle">Send your message to the world.</p>
-            <a className="button is-primary" href="#how-it-works">
+            <a className="button is-primary has-text-weight-bold" href="#how-it-works">
               Learn More
             </a>
           </div>

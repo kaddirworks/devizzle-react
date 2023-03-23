@@ -41,8 +41,8 @@ class Navbar extends React.Component {
               aria-label="main navigation"
             >
               <div className="navbar-brand">
-                <NavLink className="navbar-item" to="/">
-                  <strong>Devizzle</strong>
+                <NavLink className="navbar-item is-size-4" to="/">
+                  <strong>DEVIZZLE</strong>
                 </NavLink>
                 <a
                   role="button"
@@ -58,9 +58,6 @@ class Navbar extends React.Component {
               </div>
               <div id="navbarBasicExample" className="navbar-menu">
                 <div className="navbar-start">
-                  {/* <NavLink className="navbar-item" to="/">
-                    Home
-                  </NavLink> */}
                   <NavLink className="navbar-item" to="/about">
                     About
                   </NavLink>
