@@ -84,9 +84,13 @@ class UserConversationHistoryPanel extends React.Component {
 
   async handleReportConfirm() {
     let client = new Client(this.context.userInfo.accessToken);
-    let result = await client.bottlesReport(this.context.viewingMessage.id);
+    let result = await client.postBottlesReport(this.context.viewingMessage.id);
 
-    if (result.id) {
+    // TODO: show the message in a popup?
+
+    if (result.error) {
+      this.context.setError(result.error.message);
+    } else {
       let msgIdx = this.context.messages.indexOf(this.context.viewingMessage);
       this.context.messages.splice(msgIdx, 1);
       this.context.set({

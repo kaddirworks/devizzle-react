@@ -13,13 +13,13 @@ function Register() {
     let registerForm = document.forms[0];
     let formData = new FormData(registerForm);
     let client = new Client(null);
-    let result = await client.authRegister(Object.fromEntries(formData));
+    let result = await client.postAuthRegister(Object.fromEntries(formData));
 
-    if (result.email) {
-      setDone(true);
-      setUsedEmail(result.email);
+    if (result.error) {
+      setError(result.error.message);
     } else {
-      setError(result.detail);
+      setDone(true);
+      setUsedEmail(result.data.email);
     }
   }
 

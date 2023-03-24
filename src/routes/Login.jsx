@@ -28,7 +28,7 @@ class Login extends React.Component {
       document.cookie = `user_id=${userId}; SameSite=Lax; expires=${exp};`;
 
       this.context.setUserInfo({ username, accessToken: accessToken, userId });
-      this.context.load()
+      this.context.load();
     };
 
     this.onSubmit = async (e) => {
@@ -38,16 +38,17 @@ class Login extends React.Component {
       let formData = new FormData(form);
       let client = new Client(null);
 
-      let result = await client.authLogin(formData);
-      if (result.access_token) {
-        this.handleLogin(
-          result.access_token,
-          result.user_id,
-          result.username,
-          result.expiration
-        );
+      let result = await client.postAuthLogin(formData);
+      if (result.error) {
+        this.setError(result.error.message);
+        console.log(result.error)
       } else {
-        this.setError(result.detail);
+        this.handleLogin(
+          result.data.access_token,
+          result.data.user_id,
+          result.data.username,
+          result.data.expiration
+        );
       }
     };
   }

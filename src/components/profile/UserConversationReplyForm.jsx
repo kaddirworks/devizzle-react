@@ -21,11 +21,13 @@ class UserConversationReplyForm extends React.Component {
     };
 
     let client = new Client(this.context.userInfo.accessToken);
-    let result = await client.bottlesRespond(body);
+    let result = await client.postBottlesRespond(body);
 
-    if (result.text) {
+    if (result.error) {
+      this.context.setError(result.error.message);
+    } else {
       let newViewingMessage = { ...this.context.viewingMessage };
-      newViewingMessage.responses.push(result);
+      newViewingMessage.responses.push(result.data);
       this.context.set({
         viewingMessage: newViewingMessage,
       });

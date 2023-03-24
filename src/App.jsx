@@ -109,6 +109,10 @@ class App extends React.Component {
 
   setError(error) {
     this.setState({ error });
+    console.error(error);
+    if (import.meta.env.DEV == true) {
+      alert("Error: " + error);
+    }
   }
 
   handle401() {
@@ -120,33 +124,33 @@ class App extends React.Component {
 
   async loadMoreConversations() {
     let client = new Client(this.state.userInfo.accessToken);
-    let newMessages = await client.bottlesGetMyMessages({
+    let result = await client.getBottlesMyMessages({
       limit: 5,
       skip: this.state.offset,
     });
-    if (newMessages.detail) {
-      this.setError(newMessages.detail);
-    }
-    if (newMessages) {
-      this.setState({ messages: this.state.messages.concat(newMessages) });
+
+    if (result.error) {
+      this.setError(result.error.message);
+    } else {
+      this.setState({ messages: this.state.messages.concat(result.data) });
       this.setState({ offset: this.state.offset + 5 });
     }
   }
 
   async loadProfile(client) {
-    let profileInfo = await client.getProfile();
+    let result = await client.getBottlesProfile();
 
-    if (profileInfo.id) {
-      this.setState({
-        messagingProfile: profileInfo.id,
-        dateRegistered: new Date(profileInfo.date_created).toLocaleDateString(),
-        sentCount: profileInfo.sent_count,
-        receivedCount: profileInfo.received_count,
-        reputation: profileInfo.reputation,
-        ranking: profileInfo.ranking,
-      });
+    if (result.error) {
+      this.setError(result.error.message);
     } else {
-      console.error(profileInfo);
+      this.setState({
+        messagingProfile: result.data.id,
+        dateRegistered: new Date(result.data.date_created).toLocaleDateString(),
+        sentCount: result.data.sent_count,
+        receivedCount: result.data.received_count,
+        reputation: result.data.reputation,
+        ranking: result.data.ranking,
+      });
     }
   }
 
@@ -180,17 +184,17 @@ class App extends React.Component {
 
     let client = new Client(accessToken);
     await this.loadProfile(client);
-    await client.bottlesReceive();
+    await client.getBottlesReceive();
 
-    let result = await client.bottlesGetMyMessages({
+    let result = await client.getBottlesMyMessages({
       limit: 5,
       skip: this.state.offset,
     });
 
-    if (result.detail) {
-      this.setError(result.error);
-    } else if (result) {
-      this.setState({ messages: result, viewingMessage: result[0] });
+    if (result.error) {
+      this.setError(result.error.message);
+    } else{
+      this.setState({ messages: result.data, viewingMessage: result.data[0] });
       this.setState({ offset: this.state.offset + 5 });
     }
   }

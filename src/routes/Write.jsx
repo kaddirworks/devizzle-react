@@ -25,19 +25,20 @@ class Write extends React.Component {
     let form = document.forms[0];
     let formData = new FormData(form);
     let client = new Client(this.context.userInfo.accessToken);
-    let result = await client.bottlesSend({ message: formData.get("message") });
+    let result = await client.postBottlesSend({
+      message: formData.get("message"),
+    });
 
-    console.log(result);
-    if (result.id) {
+    if (result.error) {
+      this.setResult("Error: " + result.error.message);
+    } else {
       this.setResult("Your message was sent!");
       let newMessage = {
-        ...result,
+        ...result.data,
         responses: [],
       };
       this.context.messages.push(newMessage);
       this.context.set({ viewingMessage: newMessage });
-    } else {
-      this.setResult("An unexpected error has ocurred :,(");
     }
   }
 
